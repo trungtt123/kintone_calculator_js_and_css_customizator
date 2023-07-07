@@ -1,9 +1,5 @@
-async function createCursor(appId, size = 500) {
+async function createCursor(body) {
     // auto get 500 records
-    const body = {
-        'app': appId,
-        'size': size
-    };
     return new Promise((resolve, reject) => {
         kintone.api(kintone.api.url('/k/v1/records/cursor', true), 'POST', body, function (resp) {
             // success
@@ -46,10 +42,10 @@ async function getRecordByCursor(cursor) {
         });
     })
 }
-async function getAllRecordsFromKintone(appId) {
+async function getAllRecordsFromKintone(body) {
     try {
         // create cursor
-        const cursor = await createCursor(appId, 500);
+        const cursor = await createCursor(body);
         // fetch all data
         let allRecords = await getRecordByCursor(cursor);
         // delete cursor

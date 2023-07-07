@@ -87,23 +87,16 @@
           alert(textCustomize["Enter the end date!"]);
           return;
         }
-        modalDiv.show();
-        // get all records
-        let records = await getAllRecordsFromKintone(config?.sourceAppId);
-        // filter exist data
-
         let endDate = new Date(endDateValue);
-        endDate.setHours(23);
-        endDate.setMinutes(59);
-        endDate.setSeconds(59);
         let startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
-        startDate.setHours(0);
-        startDate.setMinutes(0);
-        startDate.setSeconds(0);
-        records = records.filter(o => {
-          let tmpDate = new Date(o[config?.sourceDateStarted].value);
-          return startDate <= tmpDate && tmpDate <= endDate;
-        })
+        let startDateValue = formatDateToYYYYMMDD(startDate);
+        modalDiv.show();
+        // get all record
+        let records = await getAllRecordsFromKintone({
+          app: config.sourceAppId,
+          query: `${config?.sourceDateStarted} >= "${startDateValue}T00:00:00Z" and ${config?.sourceDateStarted} <= "${endDateValue}T23:59:59Z"`,
+          size: 500
+        });
         console.log('records', records);
         let expectData = {};
         let projectData = {};
