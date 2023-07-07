@@ -1,29 +1,62 @@
-async function getRecords(appId, size, offset) {
+async function createCursor(appId, size = 500) {
+    // auto get 500 records
+    const body = {
+        'app': appId,
+        'size': size
+    };
     return new Promise((resolve, reject) => {
-        kintone.api(kintone.api.url('/k/v1/records', true), 'GET', { app: appId, query: `limit ${size} offset ${offset}` }, function (resp) {
+        kintone.api(kintone.api.url('/k/v1/records/cursor', true), 'POST', body, function (resp) {
+            // success
             resolve(resp);
         }, function (error) {
+            // error
             reject(error);
         });
     });
 }
+function deleteCursor(cursorId) {
+    return new Promise((resolve, reject) => {
+      kintone.api(kintone.api.url('/k/v1/records/cursor', true), 'DELETE', { id: cursorId }, function(resp) {
+        // success
+        resolve(resp);
+      }, function(error) {
+        // error
+        reject(error);
+      });
+    });
+  }
+async function getRecordByCursor(cursor) {
+    var body = {
+        'id': cursor.id
+    };
+    return new Promise((resolve, reject) => {
+        kintone.api(kintone.api.url('/k/v1/records/cursor', true), 'GET', body, function (resp) {
+            // success
+            let records = resp.records;
+            if (resp.next) {
+                resolve(getRecordByCursor(cursor)
+                    .then(nextRecords => records.concat(nextRecords)).catch(e => {
+                        console.error(e);
+                    }));
+            }
+            resolve(records);
+        }, function (error) {
+            // error
+            reject(error);
+        });
+    })
+}
 async function getAllRecordsFromKintone(appId) {
-    const allRecords = [];
-    let offset = 0;
-    let hasMoreRecords = true;
-
-    while (hasMoreRecords) {
-        const response = await getRecords(appId, 100, offset);
-
-        const records = response.records;
-        allRecords.push(...records);
-
-        if (records.length < 100) {
-            hasMoreRecords = false;
-        } else {
-            offset += 100;
-        }
+    try {
+        // create cursor
+        const cursor = await createCursor(appId, 500);
+        // fetch all data
+        let allRecords = await getRecordByCursor(cursor);
+        // delete cursor
+        // await deleteCursor(cursor.id);
+        return allRecords;
     }
-
-    return allRecords;
+    catch (e) {
+        console.error(e);
+    }
 }
