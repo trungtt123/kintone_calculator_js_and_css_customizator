@@ -47,6 +47,7 @@
   })
   kintone.events.on(['app.record.create.show', 'app.record.edit.show'], function (event) {
     try {
+      const record = event.record;
       kintone.app.record.setFieldShown('開始日', false);
       kintone.app.record.setFieldShown('終了日', false);
       $('#MF-JIRA-CALCULATOR').remove();
@@ -75,10 +76,17 @@
           </div>
           `
       );
-      let date15 = new Date();
-      date15.setDate(15);
-      $("#mf-endDate").val(formatDateToYYYYMMDD(date15));
-      selectedEndDate = formatDateToYYYYMMDD(date15);
+      if (!record['終了日'].value){
+        let date15 = new Date();
+        date15.setDate(15);
+        $("#mf-endDate").val(formatDateToYYYYMMDD(date15));
+        selectedEndDate = formatDateToYYYYMMDD(date15);
+      }
+      else {
+        $("#mf-endDate").val(record['終了日'].value);
+        selectedEndDate = record['終了日'].value;
+      }
+      
       // init dataExportCsv
       let dataTable = event.record[config?.targetTable];
       dataExportCsv = dataTable.value.map(o => [o.value[config?.targetEndDate].value, o.value[config?.targetDisplayName].value, o.value[config?.targetProjectId].value, o.value[config?.targetProjectName].value, o.value[config?.targetPercent].value])
@@ -195,10 +203,10 @@
       'app': kintone.app.getId(),
       'id': record.$id.value,
       'record': {
-        '終了日': {
+        '開始日': {
           'value': selectedStartDate
         },
-        '開始日': {
+        '終了日': {
           'value': selectedEndDate
         }
       }
