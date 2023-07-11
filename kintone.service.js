@@ -12,15 +12,15 @@ async function createCursor(body) {
 }
 function deleteCursor(cursorId) {
     return new Promise((resolve, reject) => {
-      kintone.api(kintone.api.url('/k/v1/records/cursor', true), 'DELETE', { id: cursorId }, function(resp) {
-        // success
-        resolve(resp);
-      }, function(error) {
-        // error
-        reject(error);
-      });
+        kintone.api(kintone.api.url('/k/v1/records/cursor', true), 'DELETE', { id: cursorId }, function (resp) {
+            // success
+            resolve(resp);
+        }, function (error) {
+            // error
+            reject(error);
+        });
     });
-  }
+}
 async function getRecordByCursor(cursor) {
     var body = {
         'id': cursor.id
@@ -55,4 +55,13 @@ async function getAllRecordsFromKintone(body) {
     catch (e) {
         console.error(e);
     }
+}
+async function updateRecord(body) {
+    return new Promise(function (resolve, reject) {
+        kintone.api(kintone.api.url('/k/v1/record', true), 'PUT', body, function (resp) {
+            resolve(resp);
+        }, function (error) {
+            reject(error);
+        });
+    });
 }

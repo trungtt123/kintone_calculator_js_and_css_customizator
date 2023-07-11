@@ -22,13 +22,16 @@
   }
   const headerRow = ["工数集計締め年月日", "従業員氏名", "プロジェクト番号", "プロジェクト名称", "割合"];
   let dataExportCsv = [];
+  let selectedEndDate;
   kintone.events.on(['app.record.detail.show'], async function (event) {
+    kintone.app.record.setFieldShown('開始日', false);
+    kintone.app.record.setFieldShown('終了日', false);
     $('#MF-JIRA-CALCULATOR').remove();
-    $('#record-gaia').prepend(
+    $('.gaia-argoui-app-toolbar-statusmenu').prepend(
       `
-        <div class="mf-jiraTimesheet-controls" id="MF-JIRA-CALCULATOR">
+        <div id="MF-JIRA-CALCULATOR">
           <div class="flex-row">
-            <button id="btnExportCsv" class="mf-submit-button plugin-mb-1">${textCustomize["Export csv"]}</button>
+            <button id="btnExportCsv" class="mf-submit-button">${textCustomize["Export csv"]}</button>
           </div>
         </div>
         `
@@ -42,8 +45,10 @@
       exportToCSV(headerRow, dataExportCsv, filename);
     })
   })
-  kintone.events.on(['app.record.create.show', 'app.record.edit.show'], async function (event) {
+  kintone.events.on(['app.record.create.show', 'app.record.edit.show'], function (event) {
     try {
+      kintone.app.record.setFieldShown('開始日', false);
+      kintone.app.record.setFieldShown('終了日', false);
       $('#MF-JIRA-CALCULATOR').remove();
       let modalDiv = $('<div>', {
         id: 'modalLoading',
@@ -64,7 +69,7 @@
                 <label for="mf-endDate" class="mf-date-label">${textCustomize["End date"]}</label>
                 <input type="date" id="mf-endDate" class="mf-date-input plugin-mb-1 plugin-mr-small">
               </div>
-              <button id="btnCalculator" class="mf-submit-button plugin-mb-1 plugin-mr-small" style="margin-top: 26px">${textCustomize["Calculating"]}</button>
+              <button id="btnCalculator" class="mf-submit-button plugin-mb-1 mr-2rem" style="margin-top: 26px">${textCustomize["Calculating"]}</button>
               <button id="btnExportCsv" class="mf-submit-button plugin-mb-1" style="margin-top: 26px">${textCustomize["Export csv"]}</button>
             </div>
           </div>
@@ -73,9 +78,14 @@
       let date15 = new Date();
       date15.setDate(15);
       $("#mf-endDate").val(formatDateToYYYYMMDD(date15));
+      selectedEndDate = formatDateToYYYYMMDD(date15);
       // init dataExportCsv
       let dataTable = event.record[config?.targetTable];
       dataExportCsv = dataTable.value.map(o => [o.value[config?.targetEndDate].value, o.value[config?.targetDisplayName].value, o.value[config?.targetProjectId].value, o.value[config?.targetProjectName].value, o.value[config?.targetPercent].value])
+
+      $("#mf-endDate").change(function() {
+        selectedEndDate = $(this).val();
+      });
 
       $("#btnExportCsv").click(function (event) {
         let filename = "calculator";
@@ -88,8 +98,7 @@
           return;
         }
         let endDate = new Date(endDateValue);
-        let startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
-        let startDateValue = formatDateToYYYYMMDD(startDate);
+        let startDateValue = moment(endDateValue).subtract(1, 'months').format('YYYY-MM-DD');
         modalDiv.show();
         // get all record
         let records = await getAllRecordsFromKintone({
@@ -154,7 +163,7 @@
           for (let j in expectData[user]) {
             let item = expectData[user][j];
             if (!item?.value || item?.value === "0") continue;
-            dataExportCsv.push([formatDateToYYYYMMDD(endDate), user, item?.projectId, projectData[item?.projectId], item?.value.toString()]);
+            dataExportCsv.push([formatDateToYYYYMMDD(endDate), user, item?.projectId, projectData[item?.projectId], item?.value + '%']);
             let arr = tableBody.querySelectorAll('tr');
             let lastTr = arr[arr.length - 1];
             let tds = lastTr.querySelectorAll('td');
@@ -162,7 +171,7 @@
             tds[1].querySelector('input').value = user;
             tds[2].querySelector('input').value = item?.projectId;
             tds[3].querySelector('input').value = projectData[item?.projectId];
-            tds[4].querySelector('input').value = item?.value;
+            tds[4].querySelector('input').value = item?.value + '%';
             if (i == users.length - 1 && j == expectData[user].length - 1) continue;
             let btnAddRow = lastTr.querySelector('button.add-row-image-gaia');
             btnAddRow.click();
@@ -173,6 +182,28 @@
     }
     catch (e) {
       console.error(e);
+      modalDiv.hide();
     }
-  })
+
+    return event;
+  });
+  kintone.events.on(['app.record.create.submit.success', 'app.record.edit.submit.success'], async function (event) {
+    console.log('event.record', event.record);
+    let record = event.record;
+    let selectedStartDate = moment(selectedEndDate).subtract(1, 'months').format('YYYY-MM-DD');
+    let body = {
+      'app': kintone.app.getId(),
+      'id': record.$id.value,
+      'record': {
+        '終了日': {
+          'value': selectedStartDate
+        },
+        '開始日': {
+          'value': selectedEndDate
+        }
+      }
+    }
+    await updateRecord(body);
+  });
+
 })();
