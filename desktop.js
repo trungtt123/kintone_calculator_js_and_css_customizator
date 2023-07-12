@@ -64,7 +64,7 @@
         endDate.date(15);
       }
       selectedEndDate = endDate.format('YYYY-MM-DD');
-      record[`${config.targetSelectStartDate}`].disabled = true;
+      // record[`${config.targetSelectStartDate}`].disabled = true;
       record[`${config.targetSelectEndDate}`].value = selectedEndDate;
       selectedStartDate = moment(selectedEndDate).subtract(1, 'months').add(1, 'days').format('YYYY-MM-DD');
       $('#MF-JIRA-CALCULATOR').remove();
@@ -188,23 +188,4 @@
 
     return event;
   });
-  kintone.events.on(['app.record.create.submit.success', 'app.record.edit.submit.success'], async function (event) {
-    console.log('event.record', event.record);
-    let record = event.record;
-    let selectedStartDate = moment(selectedEndDate).subtract(1, 'months').add(1, 'days').format('YYYY-MM-DD');
-    let body = {
-      'app': kintone.app.getId(),
-      'id': record.$id.value,
-      'record': {
-        '開始日': {
-          'value': selectedStartDate
-        },
-        '終了日': {
-          'value': selectedEndDate
-        }
-      }
-    }
-    await updateRecord(body);
-  });
-
 })();
