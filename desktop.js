@@ -27,15 +27,15 @@
   let selectedEndDate, selectedStartDate;
   kintone.events.on(['app.record.detail.show'], async function (event) {
     $('#MF-JIRA-CALCULATOR').remove();
-    $('.gaia-argoui-app-toolbar-statusmenu').prepend(
+    $(".control-date-field-gaia")?.last()?.parent()?.append(
       `
-        <div id="MF-JIRA-CALCULATOR">
-          <div class="flex-row">
-            <button id="btnExportCsv" class="mf-submit-button">${textCustomize["Export csv"]}</button>
-          </div>
+      <div class="mf-jiraTimesheet-controls" id="MF-JIRA-CALCULATOR">
+        <div class="flex-row">
+          <button id="btnExportCsv" class="mf-submit-button" style="margin-top: 20px">${textCustomize["Export csv"]}</button>
         </div>
-        `
-    );
+      </div>
+      `
+    )
     // init dataExportCsv
     let dataTable = event.record[config?.targetTable];
     dataExportCsv = dataTable.value.map(o => [o.value[config?.targetEndDate].value, o.value[config?.targetDisplayName].value, o.value[config?.targetProjectId].value, o.value[config?.targetProjectName].value, o.value[config?.targetPercent].value])
@@ -79,16 +79,16 @@
           `,
       });
       $('body').append(modalDiv);
-      $('#record-gaia').prepend(
+      $(".control-date-field-gaia")?.last()?.parent()?.append(
         `
-          <div class="mf-jiraTimesheet-controls" id="MF-JIRA-CALCULATOR">
-            <div class="flex-row">
-              <button id="btnCalculator" class="mf-submit-button plugin-mb-1 mr-2rem">${textCustomize["Calculating"]}</button>
-              <button id="btnExportCsv" class="mf-submit-button plugin-mb-1">${textCustomize["Export csv"]}</button>
-            </div>
+        <div class="mf-jiraTimesheet-controls" id="MF-JIRA-CALCULATOR">
+          <div class="flex-row">
+            <button id="btnCalculator" class="mf-submit-button mr-2rem" style="margin-top: 32px">${textCustomize["Calculating"]}</button>
+            <button id="btnExportCsv" class="mf-submit-button" style="margin-top: 32px">${textCustomize["Export csv"]}</button>
           </div>
-          `
-      );
+        </div>
+        `
+      )
       // init dataExportCsv
       let dataTable = event.record[config?.targetTable];
       dataExportCsv = dataTable.value.map(o => [o.value[config?.targetEndDate].value, o.value[config?.targetDisplayName].value, o.value[config?.targetProjectId].value, o.value[config?.targetProjectName].value, o.value[config?.targetPercent].value])
@@ -155,6 +155,7 @@
         tds[1].querySelector('input').value = '';
         tds[2].querySelector('input').value = '';
         tds[3].querySelector('input').value = '';
+        tds[4].querySelector('input').value = '';
         dataExportCsv = [];
         let tableBody = document.querySelector('table tbody')
         for (let i in users) {
@@ -162,7 +163,7 @@
           for (let j in expectData[user]) {
             let item = expectData[user][j];
             if (!item?.value || item?.value === "0") continue;
-            dataExportCsv.push([moment(selectedEndDate).format('YYYY-MM-DD'), user, item?.projectId, projectData[item?.projectId], item?.value + '%']);
+            dataExportCsv.push([moment(selectedEndDate).format('YYYY-MM-DD'), user, item?.projectId, projectData[item?.projectId], item?.value]);
             let arr = tableBody.querySelectorAll('tr');
             let lastTr = arr[arr.length - 1];
             let tds = lastTr.querySelectorAll('td');
@@ -170,7 +171,7 @@
             tds[1].querySelector('input').value = user;
             tds[2].querySelector('input').value = item?.projectId;
             tds[3].querySelector('input').value = projectData[item?.projectId];
-            tds[4].querySelector('input').value = item?.value + '%';
+            tds[4].querySelector('input').value = item?.value;
             if (i == users.length - 1 && j == expectData[user].length - 1) continue;
             let btnAddRow = lastTr.querySelector('button.add-row-image-gaia');
             btnAddRow.click();
