@@ -48,6 +48,7 @@
   // update startDate after endDate change
   kintone.events.on([`app.record.create.change.${config.targetSelectEndDate}`, `app.record.edit.change.${config.targetSelectEndDate}`], function(event) {
     const record = event.record;
+    selectedEndDate = moment(record[`${config.targetSelectEndDate}`].value).format('YYYY-MM-DD');
     selectedStartDate = moment(record[`${config.targetSelectEndDate}`].value).subtract(1, 'months').format('YYYY-MM-DD');
     record[`${config.targetSelectStartDate}`].value = selectedStartDate;
     return event;
@@ -161,11 +162,11 @@
           for (let j in expectData[user]) {
             let item = expectData[user][j];
             if (!item?.value || item?.value === "0") continue;
-            dataExportCsv.push([endDate.format('YYYY-MM-DD'), user, item?.projectId, projectData[item?.projectId], item?.value + '%']);
+            dataExportCsv.push([moment(selectedEndDate).format('YYYY-MM-DD'), user, item?.projectId, projectData[item?.projectId], item?.value + '%']);
             let arr = tableBody.querySelectorAll('tr');
             let lastTr = arr[arr.length - 1];
             let tds = lastTr.querySelectorAll('td');
-            tds[0].querySelector('input').value =  endDate.format('YYYY-MM-DD');
+            tds[0].querySelector('input').value = moment(selectedEndDate).format('YYYY-MM-DD');
             tds[1].querySelector('input').value = user;
             tds[2].querySelector('input').value = item?.projectId;
             tds[3].querySelector('input').value = projectData[item?.projectId];
