@@ -64,12 +64,6 @@
   }
 }
 
-.input-label {
-  width: 100px;
-  display: inline-block;
-  margin-right: 10px;
-}
-
 .flex-row {
   display: flex;
   flex-direction: row;
@@ -78,14 +72,6 @@
 .flex-column {
   display: flex;
   flex-direction: column;
-}
-
-.plugin-mb-1 {
-  margin-bottom: 1rem;
-}
-
-.plugin-mr-small {
-  margin-right: 0.5rem;
 }
 
 .mf-submit-button {
@@ -113,113 +99,7 @@
 .mf-jiraTimesheet-controls {
   margin: 0 18px;
 }
-.mf-date-input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  outline: none;
-  background-color: #f5f5f5;
-  /* Tùy chỉnh màu nền */
-  color: #333;
-  /* Tùy chỉnh màu chữ */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  /* Tùy chỉnh đổ bóng */
-}
-
-.mf-date-input:hover {
-  border-color: #999;
-  /* Tùy chỉnh màu viền khi di chuột qua */
-}
-
-.mf-date-input:focus {
-  border-color: #0066cc;
-  /* Tùy chỉnh màu viền khi trường input đang được focus */
-}
-.mf-date-label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 5px;
-  /* Tùy chỉnh khoảng cách với trường input */
-}
-label.required-field::after {
-  content: " (*)";
-  color: red;
-}
 
 .mr-2rem {
   margin-right: 2rem;
-}
-.flex-row {
-  display: flex;
-  flex-direction: row;
-}
-
-.timesheet-status {
-  margin-top: 20px;
-  font: 15px;
-}
-
-.plugin-space-left {
-  margin-left: 18px;
-}
-
-.buttonload {
-  background-color: #04AA6D;
-  /* Green background */
-  border: none;
-  /* Remove borders */
-  color: white;
-  /* White text */
-  padding: 12px 24px;
-  /* Some padding */
-  font-size: 16px;
-  /* Set a font-size */
-  border-radius: 5px;
-}
-
-/* Add a right margin to each icon */
-.buttonload .fa {
-  margin-left: -12px;
-  margin-right: 8px;
-}
-
-#plugin-space {
-  background-color: ghostwhite;
-  padding: 1px 18px 50px 18px;
-  /* margin-top: -22px; */
-}
-
-#projectCostTable {
-  margin-top: 10px;
-}
-
-#plugin-space h3 {
-  font-size: 22px;
-  font-weight: bold;
-}
-
-#projectCostTable table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: Arial, sans-serif;
-}
-
-#projectCostTable table th, #projectCostTable table td {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-#projectCostTable table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-}
-
-#projectCostTable table tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-#projectCostTable table tbody tr:hover {
-  background-color: #e2e2e2;
 }
