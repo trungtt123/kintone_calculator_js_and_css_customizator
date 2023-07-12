@@ -188,23 +188,4 @@
 
     return event;
   });
-  kintone.events.on(['app.record.create.submit.success', 'app.record.edit.submit.success'], async function (event) {
-    console.log('event.record', event.record);
-    let record = event.record;
-    let selectedStartDate = moment(selectedEndDate).subtract(1, 'months').add(1, 'days').format('YYYY-MM-DD');
-    let body = {
-      'app': kintone.app.getId(),
-      'id': record.$id.value,
-      'record': {
-        '開始日': {
-          'value': selectedStartDate
-        },
-        '終了日': {
-          'value': selectedEndDate
-        }
-      }
-    }
-    await updateRecord(body);
-  });
-
 })();

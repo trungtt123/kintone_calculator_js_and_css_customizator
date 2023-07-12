@@ -56,12 +56,3 @@ async function getAllRecordsFromKintone(body) {
         console.error(e);
     }
 }
-async function updateRecord(body) {
-    return new Promise(function (resolve, reject) {
-        kintone.api(kintone.api.url('/k/v1/record', true), 'PUT', body, function (resp) {
-            resolve(resp);
-        }, function (error) {
-            reject(error);
-        });
-    });
-}
