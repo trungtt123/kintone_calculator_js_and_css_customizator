@@ -64,7 +64,7 @@
         endDate.date(15);
       }
       selectedEndDate = endDate.format('YYYY-MM-DD');
-      record[`${config.targetSelectStartDate}`].disabled = true;
+      // record[`${config.targetSelectStartDate}`].disabled = true;
       record[`${config.targetSelectEndDate}`].value = selectedEndDate;
       selectedStartDate = moment(selectedEndDate).subtract(1, 'months').add(1, 'days').format('YYYY-MM-DD');
       $('#MF-JIRA-CALCULATOR').remove();
