@@ -671,7 +671,6 @@
 .mf-submit-button {
   height: 48px;
   padding: 0px 20px;
-  background-color: #4CAF50;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -679,16 +678,20 @@
   cursor: pointer;
 }
 
-.mf-submit-button:hover {
-  background-color: #45a049;
+#btnCalculator {
+  background-color: #28a745;
 }
 
-.mf-submit-button:active {
-  background-color: #3e8e41;
+#btnExportCsv {
+  background-color: #0069d9;
+}
+
+.mf-submit-button:hover {
+  opacity: 0.8;
 }
 
 .mf-jiraTimesheet-controls {
-  margin: 10px 15px;
+  margin: 0 18px;
 }
 .mf-date-input {
   padding: 10px;
@@ -722,4 +725,8 @@
 label.required-field::after {
   content: " (*)";
   color: red;
+}
+
+.mr-2rem {
+  margin-right: 2rem;
 }
