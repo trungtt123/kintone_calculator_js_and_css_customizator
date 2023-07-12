@@ -7,20 +7,20 @@
     "Enter the end date!": "終了日を入力してください！"
   }
   const config = {
-    sourceAppId: "5",
-    sourceDateStarted: "dateStarted",
-    sourceDisplayName: "displayName",
-    sourceKey: "key",
-    sourceProject: "project",
-    sourceTimespent: "timeSpent",
-    targetDisplayName: "displayName",
-    targetSelectStartDate: 'startDate',
-    targetSelectEndDate: 'endDate',
-    targetEndDate: "date",
-    targetPercent: "percent",
-    targetProjectId: "projectId",
-    targetProjectName: "projectName",
-    targetTable: "Table"
+    sourceAppId: "64",
+    sourceDateStarted: "日時",
+    sourceDisplayName: "表示名",
+    sourceKey: "キー",
+    sourceProject: "プロジェクト",
+    sourceTimespent: "使用時間",
+	targetDisplayName: "従業員氏名",
+	targetSelectStartDate: '開始日',
+    targetSelectEndDate: '終了日',
+    targetEndDate: "工数集計締め年月日",
+    targetPercent: "割合",
+    targetProjectId: "プロジェクト番号",
+    targetProjectName: "プロジェクト名称",
+    targetTable: "プロジェクト別人件費配賦"
   }
   const headerRow = ["工数集計締め年月日", "従業員氏名", "プロジェクト番号", "プロジェクト名称", "割合"];
   let dataExportCsv = [];
@@ -49,7 +49,7 @@
   kintone.events.on([`app.record.create.change.${config.targetSelectEndDate}`, `app.record.edit.change.${config.targetSelectEndDate}`], function(event) {
     const record = event.record;
     selectedEndDate = moment(record[`${config.targetSelectEndDate}`].value).format('YYYY-MM-DD');
-    selectedStartDate = moment(record[`${config.targetSelectEndDate}`].value).subtract(1, 'months').format('YYYY-MM-DD');
+    selectedStartDate = moment(record[`${config.targetSelectEndDate}`].value).subtract(1, 'months').add(1, 'days').format('YYYY-MM-DD');
     record[`${config.targetSelectStartDate}`].value = selectedStartDate;
     return event;
   })
@@ -66,7 +66,7 @@
       selectedEndDate = endDate.format('YYYY-MM-DD');
       record[`${config.targetSelectStartDate}`].disabled = true;
       record[`${config.targetSelectEndDate}`].value = selectedEndDate;
-      selectedStartDate = moment(selectedEndDate).subtract(1, 'months').format('YYYY-MM-DD');
+      selectedStartDate = moment(selectedEndDate).subtract(1, 'months').add(1, 'days').format('YYYY-MM-DD');
       $('#MF-JIRA-CALCULATOR').remove();
       let modalDiv = $('<div>', {
         id: 'modalLoading',
